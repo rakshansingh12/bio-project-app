@@ -87,6 +87,7 @@ for col in X.columns:
         input_data[col] = float(X[col].mean())
 
 input_df = pd.DataFrame([input_data])
+input_df = input_df[X.columns]
 
 # -----------------------------
 # SCALE INPUT
