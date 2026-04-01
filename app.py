@@ -82,9 +82,11 @@ for ui_name, value in input_data_ui.items():
     input_data[actual_col] = value
 
 # Fill remaining features with mean
+import random
+
 for col in X.columns:
     if col not in input_data:
-        input_data[col] = float(X[col].mean())
+        input_data[col] = float(X[col].mean()) + random.uniform(-0.5, 0.5)
 
 input_df = pd.DataFrame([input_data])
 input_df = input_df[X.columns]
