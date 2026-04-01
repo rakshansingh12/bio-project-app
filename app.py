@@ -89,15 +89,13 @@ input_df = pd.DataFrame([input_data])
 input_df = input_df[X.columns]
 
 # -----------------------------
-# SCALE INPUT
-# -----------------------------
-input_scaled = scaler.transform(input_df)
+
 
 # -----------------------------
 # PREDICTION
 # -----------------------------
-prediction = model.predict(input_scaled)[0]
-probability = model.predict_proba(input_scaled)[0][1]
+prediction = model.predict(input_df)[0]
+probability = model.predict_proba(input_df)[0][1]
 
 # -----------------------------
 # MAIN LAYOUT
