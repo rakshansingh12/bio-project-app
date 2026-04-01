@@ -39,6 +39,8 @@ df = pd.read_csv("final_selected_dataset.csv")
 X = df.drop('Outcome', axis=1)
 y = df['Outcome']
 
+st.write(X.columns)
+
 # -----------------------------
 # TRAIN MODEL
 # -----------------------------
@@ -52,17 +54,31 @@ st.sidebar.title("🔧 Patient Information")
 
 input_data = {}
 
-# Real-world values (fix for negative issue)
-input_data["Age"] = st.sidebar.slider("Age", 10, 80, 30)
-input_data["BloodPressure"] = st.sidebar.slider("Blood Pressure", 50, 180, 100)
-input_data["SkinThickness"] = st.sidebar.slider("Skin Thickness", 10, 100, 30)
+# Create mapping: UI name → actual dataset column
+feature_mapping = {
+    "Age": "Age",
+    "Blood Pressure": "BloodPressure",   # adjust if needed
+    "Skin Thickness": "SkinThickness"    # adjust if needed
+}
+
+# Take user input (UI friendly)
+input_data_ui = {}
+input_data_ui["Age"] = st.sidebar.slider("Age", 10, 80, 30)
+input_data_ui["Blood Pressure"] = st.sidebar.slider("Blood Pressure", 50, 180, 100)
+input_data_ui["Skin Thickness"] = st.sidebar.slider("Skin Thickness", 10, 100, 30)
+
+# Convert UI → model format
+input_data = {}
+
+for ui_name, value in input_data_ui.items():
+    actual_col = feature_mapping[ui_name]
+    input_data[actual_col] = value
 
 # Add remaining features automatically
 for col in X.columns:
     if col not in input_data:
-        input_data[col] = st.sidebar.slider(col, 0.0, 1.0, 0.5)
+        input_data[col] = float(X[col].mean())
 
-# Convert to DataFrame
 input_df = pd.DataFrame([input_data])
 
 # -----------------------------
