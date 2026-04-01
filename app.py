@@ -397,44 +397,6 @@ with perf2:
 
 st.markdown("---")
 
-# ── INTERVIEW & DOCUMENTATION NOTES ──────────────────────────
-with st.expander("🛠️ What Was Fixed vs v1? (For Interviews & Documentation)"):
-    st.markdown("""
-    | Problem in v1 | Root Cause | Fix in v2 | Impact |
-    |---|---|---|---|
-    | Confidence always ~2% | No scaler applied to user inputs | z-score scaling using original Pima statistics | Confidence now 3%–95% |
-    | Predictions didn't change | 5 of 8 features auto-filled with mean + random noise | All 8 features exposed as sliders | Model responds to all inputs |
-    | Weak model (AUC 0.62) | Feature selection removed Glucose & BMI (most important features) | Use all 8 features | AUC: 0.62 → 0.82 |
-    | Model retrained every click | No caching | `@st.cache_resource` | Fast, consistent |
-    | Class imbalance ignored | 500 vs 268 samples, unweighted | `class_weight='balanced'` | Better recall for high-risk |
-    | No explanation | Black-box output | Feature contribution per patient | Interpretable |
-    | No validation shown | No test split | 80/20 split + 5-fold CV AUC | Scientifically valid |
-    | Random noise in inputs | `random.uniform(-0.5, 0.5)` | Removed entirely | Reproducible predictions |
-    """)
-
-with st.expander("🎓 How to Explain This in Interviews"):
-    st.markdown("""
-    **Q: What was wrong with the original model?**
-    > "Two core issues. First, the most predictive features — Glucose and BMI —
-    > were removed during feature selection, reducing AUC from 0.82 to 0.62.
-    > Second, the model received out-of-distribution inputs because user inputs
-    > were never scaled, causing near-zero confidence scores."
-
-    **Q: How did you fix the 2% confidence bug?**
-    > "The dataset was pre-scaled with StandardScaler. I used the known original
-    > Pima dataset statistics to apply the same z-score transformation to user
-    > inputs, ensuring the model sees values in the same distribution it learned from."
-
-    **Q: How is the model interpretable?**
-    > "Beyond global feature importance, I compute per-patient feature contributions
-    > as scaled_value × feature_importance. This tells us which specific values drove
-    > a particular patient's prediction — analogous to a simplified SHAP explanation."
-
-    **Q: How did you handle class imbalance?**
-    > "The dataset has a 1.87:1 imbalance. I used class_weight='balanced' in
-    > RandomForestClassifier, which adjusts sample weights inversely proportional
-    > to class frequency — improving recall on the minority high-risk class."
-    """)
 
 # ── DISCLAIMER ────────────────────────────────────────────────
 st.markdown("---")
