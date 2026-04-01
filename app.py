@@ -1,4 +1,13 @@
+"""
+╔══════════════════════════════════════════════════════════════╗
+║       INTELLIGENT DISEASE PREDICTION SYSTEM v2.0            ║
+╚══════════════════════════════════════════════════════════════╝
 
+HOW TO RUN:
+  1. Place this file AND processed_data.csv in the same folder
+  2. pip install streamlit pandas scikit-learn
+  3. streamlit run app_improved.py
+"""
 
 import os
 import streamlit as st
