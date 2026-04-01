@@ -65,6 +65,8 @@ feature_mapping = {
 }
 
 # User input (UI friendly)
+input_data_ui = {}
+
 input_data_ui["Age"] = st.sidebar.slider("Age", -3.0, 3.0, 0.0)
 input_data_ui["Blood Pressure"] = st.sidebar.slider("Blood Pressure", -3.0, 3.0, 0.0)
 input_data_ui["Skin Thickness"] = st.sidebar.slider("Skin Thickness", -3.0, 3.0, 0.0)
