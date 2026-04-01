@@ -39,7 +39,7 @@ df = pd.read_csv("final_selected_dataset.csv")
 X = df.drop('Outcome', axis=1)
 y = df['Outcome']
 
-st.write(X.columns)
+
 
 # -----------------------------
 # TRAIN MODEL
