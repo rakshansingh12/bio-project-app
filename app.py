@@ -1,14 +1,6 @@
-"""
-╔══════════════════════════════════════════════════════════════╗
-║       INTELLIGENT DISEASE PREDICTION SYSTEM v2.0            ║
-╚══════════════════════════════════════════════════════════════╝
 
-HOW TO RUN:
-  1. Place this file AND processed_data.csv in the same folder
-  2. pip install streamlit pandas scikit-learn
-  3. streamlit run app_improved.py
-"""
 
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -18,6 +10,14 @@ from sklearn.metrics import (
     accuracy_score, roc_auc_score,
     confusion_matrix, classification_report
 )
+
+# ─────────────────────────────────────────────────────────────
+# STREAMLIT CLOUD FIX: Always resolve file paths relative to
+# where this script lives — not the working directory.
+# On Streamlit Cloud, os.getcwd() is NOT the repo root,
+# so "processed_data.csv" fails. __file__ always works.
+# ─────────────────────────────────────────────────────────────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ─────────────────────────────────────────────────────────────
 # PAGE CONFIG
@@ -134,7 +134,7 @@ def load_and_train():
     5. 5-fold cross-validation               — reliable AUC estimate
     6. Cached — never retrains on user interaction
     """
-    df = pd.read_csv("processed_data.csv")
+    df = pd.read_csv(os.path.join(BASE_DIR, "processed_data.csv"))
     X = df[FEATURE_COLS]   # already scaled — use directly
     y = df["Outcome"]
 
