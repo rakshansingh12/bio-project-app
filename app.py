@@ -35,9 +35,19 @@ st.sidebar.header("🔧 Patient Information")
 input_data = {}
 
 # Define realistic ranges manually
-input_data["Age"] = st.sidebar.slider("Age", 10, 80, 30)
-input_data["BloodPressure"] = st.sidebar.slider("Blood Pressure", 50, 180, 100)
-input_data["SkinThickness"] = st.sidebar.slider("Skin Thickness", 10, 100, 30)
+st.sidebar.header("🔧 Input Features")
+
+input_data = {}
+
+for col in X.columns:
+    input_data[col] = st.sidebar.slider(
+        col,
+        float(X[col].min()),
+        float(X[col].max()),
+        float(X[col].mean())
+    )
+
+input_df = pd.DataFrame([input_data])
 
 # Add other features if present
 for col in X.columns:
@@ -49,9 +59,14 @@ input_df = pd.DataFrame([input_data])
 # -----------------------------
 # NORMALIZE INPUT (IMPORTANT)
 # -----------------------------
+from sklearn.preprocessing import StandardScaler
+
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+
+# Convert input using SAME scaler
 input_scaled = scaler.transform(input_df)
+
 
 # -----------------------------
 # PREDICTION
