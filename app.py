@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 
@@ -28,40 +27,48 @@ st.markdown("""
 # -----------------------------
 st.title("🧬 Intelligent Disease Prediction System")
 st.markdown("### AI-powered feature selection + prediction")
-
 st.markdown("---")
 
 # -----------------------------
-# LOAD DATA
+# LOAD DATA (CACHED)
 # -----------------------------
-df = pd.read_csv("final_selected_dataset.csv")
+@st.cache_data
+def load_data():
+    return pd.read_csv("final_selected_dataset.csv")
+
+df = load_data()
 
 X = df.drop('Outcome', axis=1)
 y = df['Outcome']
 
+# -----------------------------
+# SCALING + MODEL (CACHED)
+# -----------------------------
+@st.cache_resource
+def train_model(X, y):
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_scaled, y)
+
+    return model, scaler
+
+model, scaler = train_model(X, y)
 
 # -----------------------------
-# TRAIN MODEL
-# -----------------------------
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X, y)
-
-# -----------------------------
-# INPUT SECTION (REAL VALUES)
+# INPUT SECTION
 # -----------------------------
 st.sidebar.title("🔧 Patient Information")
 
-input_data = {}
-
-# Create mapping: UI name → actual dataset column
+# UI → Dataset mapping
 feature_mapping = {
     "Age": "Age",
-    "Blood Pressure": "BloodPressure",   # adjust if needed
-    "Skin Thickness": "SkinThickness"    # adjust if needed
+    "Blood Pressure": "BloodPressure",
+    "Skin Thickness": "SkinThickness"
 }
 
-# Take user input (UI friendly)
+# User input (UI friendly)
 input_data_ui = {}
 input_data_ui["Age"] = st.sidebar.slider("Age", 10, 80, 30)
 input_data_ui["Blood Pressure"] = st.sidebar.slider("Blood Pressure", 50, 180, 100)
@@ -74,7 +81,7 @@ for ui_name, value in input_data_ui.items():
     actual_col = feature_mapping[ui_name]
     input_data[actual_col] = value
 
-# Add remaining features automatically
+# Fill remaining features with mean
 for col in X.columns:
     if col not in input_data:
         input_data[col] = float(X[col].mean())
@@ -82,10 +89,8 @@ for col in X.columns:
 input_df = pd.DataFrame([input_data])
 
 # -----------------------------
-# SCALING
+# SCALE INPUT
 # -----------------------------
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
 input_scaled = scaler.transform(input_df)
 
 # -----------------------------
@@ -105,11 +110,12 @@ with col1:
 
     if prediction == 1:
         st.error("⚠️ High Risk Detected")
+        st.write("The model predicts higher risk based on the input features.")
     else:
         st.success("✅ Low Risk")
+        st.write("The model predicts lower risk based on the input features.")
 
     st.metric("Confidence Score", f"{probability*100:.2f}%")
-
     st.progress(int(probability * 100))
 
 # RIGHT: INPUT SUMMARY
@@ -134,7 +140,7 @@ feature_importance = pd.DataFrame({
 st.bar_chart(feature_importance.set_index("Feature"))
 
 # -----------------------------
-# EXPLANATION SECTION
+# ABOUT SECTION
 # -----------------------------
 st.markdown("---")
 
@@ -143,9 +149,9 @@ st.subheader("🔍 About the Model")
 st.markdown("""
 This system uses:
 
-- **Adaptive Feature Selection**
-- **Biological Relevance Scoring**
-- **Random Forest Machine Learning**
+- Adaptive Feature Selection  
+- Biological Relevance Scoring  
+- Random Forest Machine Learning  
 
 to improve prediction accuracy and interpretability.
 """)
