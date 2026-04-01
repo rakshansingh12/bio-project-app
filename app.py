@@ -46,15 +46,11 @@ y = df['Outcome']
 # -----------------------------
 @st.cache_resource
 def train_model(X, y):
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
     model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_scaled, y)
+    model.fit(X, y)
+    return model
 
-    return model, scaler
-
-model, scaler = train_model(X, y)
+model = train_model(X, y)
 
 # -----------------------------
 # INPUT SECTION
@@ -69,10 +65,9 @@ feature_mapping = {
 }
 
 # User input (UI friendly)
-input_data_ui = {}
-input_data_ui["Age"] = st.sidebar.slider("Age", 10, 80, 30)
-input_data_ui["Blood Pressure"] = st.sidebar.slider("Blood Pressure", 50, 180, 100)
-input_data_ui["Skin Thickness"] = st.sidebar.slider("Skin Thickness", 10, 100, 30)
+input_data_ui["Age"] = st.sidebar.slider("Age", -3.0, 3.0, 0.0)
+input_data_ui["Blood Pressure"] = st.sidebar.slider("Blood Pressure", -3.0, 3.0, 0.0)
+input_data_ui["Skin Thickness"] = st.sidebar.slider("Skin Thickness", -3.0, 3.0, 0.0)
 
 # Convert UI → model format
 input_data = {}
